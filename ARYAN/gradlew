@@ -1,0 +1,256 @@
+#!/usr/bin/env bash
+
+##############################################################################
+##
+##  Gradle start up script for UN*X
+##
+##############################################################################
+
+# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass any JVM options to this script.
+DEFAULT_JVM_OPTS=""
+
+APP_NAME="Gradle"
+APP_BASE_NAME=`basename "$0"`
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD="maximum"
+
+# For Darwin, add options to specify how the application appears in the dock
+# etc.
+if [ -z "$DOCK_OPTS" -a "`uname`" = "Darwin" ]; then
+    DOCK_OPTS="-Xdock:name=$APP_NAME -Xdock:icon=media/gradle.icns"
+fi
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "`uname`" in
+  CYGWIN* )
+    cygwin=true
+    ;;
+  Darwin* )
+    darwin=true
+    ;;
+  MINGW* )
+    msys=true
+    ;;
+  NONSTOP* )
+    nonstop=true
+    ;;
+esac
+
+# Attempt to set APP_HOME
+# Resolve links: $0 may be a link
+PRG="$0"
+# Need this for relative symlinks.
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+
+APP_HOME=`dirname "$PRG"`
+
+# Add a slash at the end of the home dir
+if [ -z "`echo $APP_HOME | grep '\/$'`" ] ; then
+   APP_HOME="$APP_HOME/"
+fi
+
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+    [ -n "$APP_HOME" ] &&
+        APP_HOME=`cygpath --unix "$APP_HOME"`
+    [ -n "$JAVA_HOME" ] &&
+        JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+    [ -n "$CLASSPATH" ] &&
+        CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+fi
+
+# For MSYS, ensure paths are in UNIX format before anything is touched
+if $msys ; then
+    [ -n "$APP_HOME" ] &&
+        APP_HOME="`(cd "$APP_HOME"; pwd)`"
+    [ -n "$JAVA_HOME" ] &&
+        JAVA_HOME="`(cd "$JAVA_HOME"; pwd)`"
+    # TODO - no clue how to convert CLASSPATH pathways here
+fi
+
+# And find the command for the command being executed
+COMMAND="$1"
+shift
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses strange locations for the executables
+        JAVACMD="$JAVA_HOME/jre/sh/java"
+    else
+        JAVACMD="$JAVA_HOME/bin/java"
+    fi
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+else
+    JAVACMD="java"
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+fi
+
+# Increase the maximum file descriptors if we can.
+if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
+    MAX_FD_LIMIT=`ulimit -H -n`
+    if [ "$?" -eq 0 ] ; then
+        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+            # use the system max
+            MAX_FD="$MAX_FD_LIMIT"
+        fi
+        ulimit -n $MAX_FD
+        if [ "$?" -ne 0 ] ; then
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
+        fi
+    else
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
+    fi
+fi
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin ; then
+    APP_HOME=`cygpath --path --windows "$APP_HOME"`
+    JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
+    CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+    CYGHOME=`cygpath --path --windows "$HOME"`
+fi
+
+# For AIX, pass ibm.stream.nio=true to enable NIO Buffers
+if [ "`uname`" = "AIX" ] ; then
+   DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS -Dibm.stream.nio=true"
+fi
+
+# Split up the JVM options passed in by the user.
+# (This is necessary for the rare case where the user passes in a setting
+# that contains a space, like -Dfoo="bar baz".)
+set -- $DEFAULT_JVM_OPTS $DOCK_OPTS $JAVA_OPTS $GRADLE_OPTS
+GRADLE_OPTS=
+DEFAULT_JVM_OPTS=
+JAVA_OPTS=
+for arg in "$@"; do
+    # if the arg contains a space, then it must be quoted:
+    if echo "x$arg" | grep ' ' > /dev/null; then
+        arg="\"$arg\""
+    fi
+    # Add to GRADLE_OPTS
+    GRADLE_OPTS="$GRADLE_OPTS $arg"
+done
+
+# Collect all arguments for the java command, following the shell quoting rules.
+eval set -- "$JAVACMD" $GRADLE_OPTS -classpath "\"$APP_HOME/gradle/wrapper/gradle-wrapper.jar\"" org.gradle.wrapper.GradleWrapperMain "$COMMAND" "$@"
+
+# For Cygwin, switch the command line to Windows format.
+if $cygwin ; then
+    # We build the command line by hand here, in order to handle arguments with
+    # spaces.
+    # (The cygpath command above will turn "C:/Program Files" into "/cygdrive/c/Program Files"
+    # which is not what we want.)
+    #
+    # The final command will be something like:
+    #
+    # C:/Program\ Files/Java/jdk1.5.0_06/bin/java \
+    #   -Dprop1="value1" -Dprop2="value2" \
+    #   -classpath "C:/java/myapp/lib/dep1.jar;C:/java/myapp/lib/dep2.jar" \
+    #   com.mycompany.MainClass "arg1" "arg2"
+    #
+    # (Note that the classpath is a Windows path, and the command is a Windows
+    # path.)
+    #
+    JAVACMD_WIN=`cygpath --path --windows "$JAVACMD"`
+    CLASSPATH_WIN=`cygpath --path --windows "$APP_HOME/gradle/wrapper/gradle-wrapper.jar"`
+    CMD=
+    for arg in "$@"; do
+        if [ -n "$CMD" ] ; then
+            CMD="$CMD "
+        fi
+        # This will not work if the arg contains a double-quote. But we can't
+        # use single-quotes because the arg might be a parameter that contains a
+        # single-quote, like -Dfoo='bar'.
+        if echo "x$arg" | grep ' ' > /dev/null; then
+            CMD="$CMD\"$arg\""
+        else
+            CMD="$CMD$arg"
+        fi
+    done
+    # Now call the script that will execute this command.
+    # (We must call the script, rather than executing the command directly,
+    # because the script will perform some environment preparation, such as
+    # setting the correct path.)
+    #
+    # The script will be created in the current directory, and will be called
+    # "cyglaunch.bat".
+    #
+    SCRIPT_NAME=cyglaunch.bat
+    cat > $SCRIPT_NAME <<EOF
+@echo off
+rem This script is created by gradle.sh to deal with command-line
+rem argument quoting on Cygwin.
+rem
+rem When you execute a program on Cygwin, the command-line arguments are
+rem passed to the program, and the program is responsible for parsing them.
+rem (This is in contrast to other Un*x systems, where the shell is responsible
+rem for parsing the command-line arguments.)
+rem
+rem This means that if you have an argument with a space in it, you must
+rem quote it, so that the program sees it as a single argument.
+rem
+rem For example, if you have the following command:
+rem
+rem     java -Dfoo="bar baz" MyClass
+rem
+rem the JVM will see two arguments: -Dfoo=bar baz and MyClass.
+rem
+rem However, if you have the following command:
+rem
+rem     java "-Dfoo=bar baz" MyClass
+rem
+rem the JVM will see two arguments: -Dfoo=bar baz and MyClass.
+rem
+rem The problem is that when you execute a program from a shell script, the
+rem shell will parse the command-line arguments, and will remove the quotes.
+rem So if you have the following in a shell script:
+rem
+rem     java "-Dfoo=bar baz" MyClass
+rem
+rem the shell will execute the following command:
+rem
+rem     java -Dfoo=bar baz MyClass
+rem
+rem and the JVM will see three arguments: -Dfoo=bar, baz, and MyClass.
+rem
+rem The solution is to create a batch script that will execute the command
+rem with the correct quoting. The batch script will be executed by the shell
+rem script, and the shell script will pass the command-line arguments to the
+rem batch script. The batch script will then execute the command with the
+rem correct quoting.
+rem
+rem This script is created in the current directory, and is called
+rem "cyglaunch.bat". It is deleted after the command has been executed.
+
+$CMD
+EOF
+    # Now execute the batch script
+    cmd /c $SCRIPT_NAME
+    # And remove it
+    rm $SCRIPT_NAME
+else
+    # Non-cygwin, so we can just exec the command
+    exec "$@"
+fi
